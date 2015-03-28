@@ -4,7 +4,7 @@ include ../config.make
 include $(GNUSTEP_MAKEFILES)/common.make
 include ../Version
 
-ADDITIONAL_LDFLAGS += -Wl,--rpath,$(GNUSTEP_SYSTEM_LIBRARIES)/sogo
+ADDITIONAL_LDFLAGS += -Wl,--rpath,$(GNUSTEP_USER_LIBRARIES)/sogo
 
 ###
 SOGO_TOOL = sogo-tool
