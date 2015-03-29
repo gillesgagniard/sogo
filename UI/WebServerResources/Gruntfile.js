@@ -33,11 +33,13 @@ module.exports = function(grunt) {
     },
     sass: {
       options: {
-        cache: false,
+        require: 'SassyJSON',
+        noCache: true,
         loadPath: ['scss', 'bower_components/compass-mixins/lib',
                    'bower_components/compass-breakpoint/stylesheets',
                    'bower_components/breakpoint-slicer/stylesheets',
-                   'bower_components/sassy-maps/sass'
+                   'bower_components/sassy-maps/sass',
+                   'node_modules/SassyJSON/dist'
         ],
         style: 'expanded'
       },
@@ -48,15 +50,27 @@ module.exports = function(grunt) {
       }
     },
     postcss: {
-      options: {
-        map: true,
-        processors: [
-          require('autoprefixer-core')({browsers: '> 1%, last 2 versions, last 3 Firefox versions'}).postcss,
-          // We may consider using css grace (https://github.com/cssdream/cssgrace) for larger support
-          require('csswring').postcss
-        ]
-      },
       dist: {
+        options: {
+          map: false,
+          processors: [
+            require('autoprefixer-core')({browsers: '> 1%, last 2 versions, last 3 Firefox versions'}).postcss,
+            // minifier
+            require('csswring').postcss
+          ]
+          // We may consider using css grace (https://github.com/cssdream/cssgrace) for larger support
+        },
+        src: 'css/styles.css'
+      },
+      dev: {
+        options: {
+          map: true,
+          processors: [
+            require('autoprefixer-core')({browsers: '> 1%, last 2 versions, last 3 Firefox versions'}).postcss
+          ]
+          // We may consider using css grace (https://github.com/cssdream/cssgrace) for larger support
+
+        },
         src: 'css/styles.css'
       }
     },
@@ -138,6 +152,6 @@ module.exports = function(grunt) {
   });
   grunt.task.registerTask('build', ['static', 'sass']);
   grunt.task.registerTask('default', ['build', 'watch']);
-  grunt.task.registerTask('css', ['sass', 'postcss']);
+  grunt.task.registerTask('css', ['sass', 'postcss:dev']);
   grunt.task.registerTask('sass-compass', ['compass:dev', 'postcss']);
 };
