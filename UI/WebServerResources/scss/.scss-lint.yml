@@ -57,7 +57,7 @@ linters:
     enabled: true
 
   ImportPath:
-    enabled: true
+    enabled: false
     leading_underscore: false
     filename_extension: false
 
@@ -71,11 +71,12 @@ linters:
     style: include_zero
 
   MergeableSelector:
-    enabled: false
+    enabled: true
     force_nesting: false
 
   NameFormat:
-    enabled: true
+# Adapt from BEM conventiion
+    enabled: false
     convention: hyphenated_lowercase
     allow_leading_underscore: true
 
@@ -90,6 +91,7 @@ linters:
     enabled: true
     order: concentric
     ignore_unspecified: true
+    separate_groups: true
 
   PropertySpelling:
     enabled: true
@@ -108,7 +110,7 @@ linters:
   SelectorFormat:
     enabled: true
     convention: hyphenated_lowercase
-    class_convention: '^(?:u|is|has)\-[a-z][a-zA-Z0-9]*$|^(?!u|is|has)[a-zA-Z][a-zA-Z0-9]*(?:\-[a-z][a-zA-Z0-9]*)?(?:\-\-[a-z][a-zA-Z0-9]*)?$'
+#    class_convention: '^(?:u|is|has)\-[a-z][a-zA-Z0-9]*$|^(?!u|is|has)[a-zA-Z][a-zA-Z0-9]*(?:\-[a-z][a-zA-Z0-9]*)?(?:\-\-[a-z][a-zA-Z0-9]*)?$'
 
   Shorthand:
     enabled: true
