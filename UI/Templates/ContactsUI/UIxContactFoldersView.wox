@@ -6,7 +6,7 @@
     xmlns:const="http://www.skyrix.com/od/constant"
     xmlns:label="OGo:label"
     const:userDefaultsKeys="SOGoContactsCategories"
-    const:jsFiles="Common/user-model.js, Common/acl-model.js, Common/resource.js, Contacts/card-model.js, Contacts/addressbook-model.js"
+    const:jsFiles="Contacts.app.js, Contacts.js, Common.js, Contacts.js"
     className="UIxPageFrame"
     title="name">
   <script type="text/javascript">
@@ -254,7 +254,9 @@
       <div class="md-toolbar-tools md-toolbar-tools-top sg-padded" layout="row" layout-align="space-between start">
         <var:component className="UIxTopnavToolbarTemplate" />
       </div>
-      <div class="md-toolbar-tools md-toolbar-tools-bottom" layout="row" layout-align="space-between center">
+      <div class="md-toolbar-tools md-toolbar-tools-bottom"
+           layout="row" layout-align="space-between center"
+           ng-show="currentFolder.$selectedCount() == 0">
         <div class="view-list sg-padded" layout="row" layout-align="space-between center"
              sg-search="currentFolder.$filter(searchText, { search: searchField })">
           <md-input-container class="sg-search-field-container">
@@ -270,6 +272,18 @@
             </md-select>
           </div>
         </div>
+      </div>
+      <div layout="row" layout-align="start center" ng-show="currentFolder.$selectedCount() > 0">
+        <md-button ng-click="unselectCards()">
+          <i class="md-icon-arrow-back"><!-- unselect all --></i>
+        </md-button>
+        <label>{{currentFolder.$selectedCount()}} selected</label>
+        <md-button ng-click="confirmDeleteSelectedCards()">
+          <i class="md-icon-delete"><!-- delete --></i>
+        </md-button>
+        <md-button>
+          <i class="md-icon-email"><!-- email contacts --></i>
+        </md-button>
       </div>
     </md-toolbar>
     <div layout="row" class="md-flex" layout-align="space-between">
@@ -293,25 +307,31 @@
              </div>
         -->
         <md-list vs-repeat="72" vs-scroll-parent="#contactsList">
-          <md-list-item ng-repeat="currentCard in currentFolder.cards track by currentCard.id">
-            <div layout="row" flex="true"
-                 ng-class="{_selected: card.id == currentCard.id}"
-                 ng-click="toggleDetailView()">
-              <div ng-show="currentCard.tag == 'vcard'">
-                <sg-gravatar-image class="md-tile-left"
-                                   email="{{currentCard.$preferredEmail(currentFolder.$query)}}"
-                                   size="48"><!-- gravatar -->
-                </sg-gravatar-image>
-              </div>
-              <div class="sg-list-avatar" ng-show="currentCard.tag == 'vlist'">
+          <md-list-item
+              ng-repeat="currentCard in currentFolder.cards track by currentCard.id"
+              ng-class="{'sg-active': card.id == currentCard.id}"
+              ng-click="selectCard(currentCard)"
+              ui-sref-active="sg-active"
+              ui-sref="app.addressbook.card.view({addressbookId: currentFolder.id, cardId: currentCard.id})">
+            <div class="sg-selected-avatar" ng-show="currentCard.selected"
+                 ng-click="currentCard.selected = !currentCard.selected">
+              <!-- selected avatar -->
+            </div>
+              <sg-gravatar-image class="md-tile-left"
+                                 ng-show="notSelectedComponent(currentCard,'vcard')"
+                                 ng-click="currentCard.selected = !currentCard.selected"
+                                 email="{{currentCard.$preferredEmail(currentFolder.$query)}}"
+                                 size="48">
+                <!-- gravatar -->
+              </sg-gravatar-image>
+              <div class="sg-list-avatar"
+                   ng-show="notSelectedComponent(currentCard, 'vlist')"
+                   ng-click="currentCard.selected = !currentCard.selected">
                 <!--list avatar-->
               </div>
               <div class="sg-tile-content">
-                <a ui-sref="app.addressbook.card.view({addressbookId: currentFolder.id, cardId: currentCard.id})">
-                  <div class="sg-md-body-multi contact-name" ng-bind-html="currentCard.$fullname()"><!-- cn --></div>
-                  <div class="sg-md-subhead-multi contact-email">{{currentCard.$preferredEmail(currentFolder.$query)}}</div>
-                </a>
-              </div>
+                <div class="sg-md-subhead-multi" ng-bind-html="currentCard.$fullname()"><!-- cn --></div>
+                <div class="sg-md-body-multi">{{currentCard.$preferredEmail(currentFolder.$query)}}</div>
             </div>
           </md-list-item>
         </md-list>
@@ -319,14 +339,14 @@
 
       <md-button class="iconButton md-fab md-fab-bottom-right md-accent"
                  label:aria-label="New Contact"
-                 ng-click="newComponent()">
+                 ng-click="newComponent($event)">
         <i class="md-icon-add"><!--icon--></i>
       </md-button>
       </div>
 
       <!-- This extra container is used to animate views transitions
            double quotes in ng-animate is not a typo                         -->
-      <div id="detailView" class="view-detail" layout="column">
+      <div id="detailView" class="view-detail ng-cloak" ng-show="card" layout="column">
         <md-card class="viewer" ui-view="card"><!-- card view --></md-card>
       </div>
 
@@ -337,12 +357,9 @@
   <script type="text/ng-template" id="UIxUserRightsEditor">
     <var:component className="UIxContactsUserRightsEditor" />
   </script>
+
   <script type="text/ng-template" id="UIxContactViewTemplate">
     <var:component className="UIxContactViewTemplate" />
   </script>
-
-
-
-    <var:string value="errorAlertJavaScript" const:escapeHTML="NO" />
 
 </var:component>

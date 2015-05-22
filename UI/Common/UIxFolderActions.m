@@ -298,15 +298,30 @@
   return response;
 }
 
+/**
+ * @api {post} /so/:username/:folderPath/batchDelete?uids=:uids Delete multiple resources
+ * @apiVersion 1.0.0
+ * @apiName GetBatchDelete
+ * @apiGroup Common
+ * @apiExample {curl} Example usage:
+ *     curl -i http://localhost/SOGo/so/sogo1/Contacts/personal/batchDelete \
+ *          -H 'Content-Type: application/json' \
+ *          -d '{ "uids": ["1BC8-52F53F80-1-38C52041.vcf", "4095-52B0C180-31-9225E71.vlf"] }'
+ *
+ * @apiParam {String[]} uids List of resources IDs
+ *
+ * @apiError (Error 400) {Object} error The error message
+ */
 - (id) batchDeleteAction
 {
   WOResponse *response;
-  NSString *idsParam;
+  NSDictionary *data;
   NSArray *ids;
 
-  idsParam = [[context request] formValueForKey: @"ids"];
-  ids = [idsParam componentsSeparatedByString: @","];
-  if ([ids count])
+  data = [[[context request] contentAsString] objectFromJSONString];
+  ids = [data objectForKey: @"uids"];
+  
+  if ([ids isKindOfClass: [NSArray class]] && [ids count])
     {
       clientObject = [self clientObject];
       [clientObject deleteEntriesWithIds: ids];
@@ -314,8 +329,9 @@
     }
   else
     {
-      response = [self responseWithStatus: 500];
-      [response appendContentString: @"At least 1 id required."];
+      response = [self responseWithStatus: 400
+                    andJSONRepresentation: [NSDictionary dictionaryWithObject: @"At least 1 id required."
+                                                                     forKey: @"error"]];
     }
   
   return response;

@@ -1,17 +1,31 @@
 module.exports = function(grunt) {
+  var js_files = {
+    'js/Common.js': ['js/Common/Common.app.js', 'js/Common/*.filter.js', 'js/Common/*Controller.js', 'js/Common/*.service.js', 'js/Common/*.directive.js'],
+    'js/Scheduler.js': ['js/Scheduler/*.js'],
+    'js/Contacts.js': ['js/Contacts/*.js'],
+    'js/Mailer.js': ['js/Mailer/*.js'],
+    'js/Preferences.js': ['js/Preferences/*service.js', 'js/Preferences/*Controller.js']
+  };
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     sass: {
       options: {
         sourceMap: true,
-        // require: 'SassyJSON',
+        outFile: 'css/styles.css',
         noCache: true,
         includePaths: ['scss/',
                        'bower_components/breakpoint-sass/stylesheets/'
-        ],
-        style: 'expanded'
+        ]
       },
       dist: {
+        files: {
+          'css/styles.css': 'scss/styles.scss'
+        },
+        options: {
+          outputStyle: 'compressed'
+        }
+      },
+      dev: {
         files: {
           'css/styles.css': 'scss/styles.scss'
         }
@@ -42,6 +56,20 @@ module.exports = function(grunt) {
         src: 'css/styles.css'
       }
     },
+    concat_sourcemap: {
+      dist: {
+        options: {
+          sourcesContent: false
+        },
+        files: js_files
+      },
+      dev: {
+        options: {
+          sourcesContent: true
+        },
+        files: js_files
+      }
+    },
     watch: {
       grunt: {
         files: ['Gruntfile.js']
@@ -49,12 +77,17 @@ module.exports = function(grunt) {
       sass: {
         files: 'scss/**/*.scss',
         tasks: ['sass']
+      },
+      js: {
+        files: Object.keys(js_files).map(function(key) { return js_files[key]; }),
+        tasks: ['js']
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-postcss');
+  grunt.loadNpmTasks('grunt-concat-sourcemap');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.task.registerTask('static', function() {
@@ -119,7 +152,10 @@ module.exports = function(grunt) {
     }
     */
   });
-  grunt.task.registerTask('build', ['static', 'sass', 'postcss:dist']);
-  grunt.task.registerTask('css', ['sass', 'postcss:dev']);
-  grunt.task.registerTask('default', ['build', 'watch']);
+  grunt.task.registerTask('build', ['static', 'concat_sourcemap:dist', 'sass:dist', 'postcss:dist']);
+  // Tasks for developers
+  grunt.task.registerTask('default', ['watch']);
+  grunt.task.registerTask('css', ['sass:dev', 'postcss:dev']);
+  grunt.task.registerTask('js', ['concat_sourcemap:dev']);
+  grunt.task.registerTask('dev', ['css', 'js']);
 };

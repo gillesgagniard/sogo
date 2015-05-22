@@ -9,7 +9,7 @@
     xmlns:label="OGo:label"
     className="UIxPageFrame"
     title="title"
-    const:jsFiles="Common/resource.js,Common/SOGoAuthentication.js,Mailer/mailbox-model.js,Mailer/message-model.js,Preferences/preferences-model.js,Common/user-model.js">
+    const:jsFiles="Preferences.app.js, Common.js, Mailer.js, Contacts.js, Preferences.js">
 
   <main class="view md-layout-fill" ui-view="preferences" layout="row"
         ng-controller="navController"><!-- preferences --> </main>
@@ -58,13 +58,17 @@
         </div>
       </md-toolbar>
 
-      <form name="preferencesForm"
-            ng-submit="save()">
-        <div ui-view="module"><!-- view --></div>
-        <md-button class="" type="submit">
-          <var:string label:value="Save" />
-        </md-button>
-      </form>
+      <md-content>
+        <form name="preferencesForm"
+              ng-submit="app.save()">
+          <div ui-view="module"><!-- view --></div>
+          <div class="md-actions">
+            <md-button type="submit">
+              <var:string label:value="Save" />
+            </md-button>
+          </div>
+        </form>
+      </md-content>
 
     </section>
 
@@ -76,8 +80,7 @@
     -->        
     <script type="text/ng-template" id="generalPreferences.html">
 
-      <md-content layout="row" class="md-flex">
-        <md-tabs md-dynamic-height="true">
+        <md-tabs class="md-flex" md-dynamic-height="true">
 
           <!-- GENERAL OPTIONS -->
           <md-tab id="generalOptionsView" aria-controls="generalOptionsView-content" label:label="General">
@@ -90,7 +93,7 @@
               <div layout="row" layout-align="space-around center">
                 <div><var:string label:value="Language :"/></div>
                 <div>
-                  <md-select ng-model="preferences.defaults.SOGoLanguage">
+                  <md-select label:aria-label="Language :" ng-model="app.preferences.defaults.SOGoLanguage">
                     <var:foreach list="languages" item="item">
                       <md-option var:value="item">
                         <var:string value="languageText"/>
@@ -103,7 +106,7 @@
               <div layout="row" layout-align="space-around center">
                 <div><var:string label:value="Current Time Zone :"/></div>
                 <div>
-                  <md-select ng-model="preferences.defaults.SOGoTimeZone">
+                  <md-select label:aria-label="Current Time Zone :" ng-model="app.preferences.defaults.SOGoTimeZone">
                     <var:foreach list="timeZonesList" item="item">
                       <md-option var:value="item">
                         <var:string value="item"/>
@@ -116,7 +119,7 @@
               <div layout="row" layout-align="space-around center">
                 <div><var:string label:value="Short Date Format :"/></div>
                 <div>
-                  <md-select ng-model="preferences.defaults.SOGoShortDateFormat">
+                  <md-select label:aria-label="Short Date Format :" ng-model="app.preferences.defaults.SOGoShortDateFormat">
                     <var:foreach list="shortDateFormatsList" item="item">
                       <md-option var:value="item">
                         <var:string value="itemShortDateFormatText"/>
@@ -135,7 +138,7 @@
               <div layout="row" layout-align="space-around center">
                 <div><var:string label:value="Long Date Format :"/></div>
                 <div>
-                  <md-select ng-model="preferences.defaults.SOGoLongDateFormat">
+                  <md-select label:aria-label="Long Date Format :" ng-model="app.preferences.defaults.SOGoLongDateFormat">
                     <var:foreach list="longDateFormatsList" item="item">
                       <md-option var:value="item">
                         <var:string value="itemLongDateFormatText"/>
@@ -153,7 +156,7 @@
               <div layout="row" layout-align="space-around center">
                 <div><var:string label:value="Time Format :"/></div>
                 <div>
-                  <md-select ng-model="preferences.defaults.SOGoTimeFormat">
+                  <md-select label:aria-label="Time Format :" ng-model="app.preferences.defaults.SOGoTimeFormat">
                     <var:foreach list="timeFormatsList" item="item">
                       <md-option var:value="item">
                         <var:string value="itemTimeFormatText"/>
@@ -170,7 +173,7 @@
               
               <div layout="row" layout-align="space-around center">
                 <div><var:string label:value="Default Module:"/></div>
-                <md-select ng-model="preferences.defaults.SOGoLoginModule">
+                <md-select label:aria-label="Default Module:" ng-model="app.preferences.defaults.SOGoLoginModule">
                     <var:foreach list="availableModules" item="item">
                       <md-option var:value="item">
                         <var:string value="itemModuleText"/>
@@ -182,7 +185,7 @@
               <div layout="row" layout-align="space-around center">
                 <div><var:string label:value="Refresh View :"/></div>
                 <div>
-                  <md-select ng-model="preferences.defaults.SOGoRefreshViewCheck">
+                  <md-select label:aria-label="Refresh View :" ng-model="app.preferences.defaults.SOGoRefreshViewCheck">
                     <var:foreach list="refreshViewList" item="item">
                       <md-option var:value="item">
                         <var:string value="itemRefreshViewCheckText"/>
@@ -203,16 +206,16 @@
                 <md-input-container>
                   <label><var:string label:value="New password:"/>
                   </label>
-	          <input type="password" ng-model="passwords.newPassword"/>
+	          <input type="password" ng-model="app.passwords.newPassword"/>
                 </md-input-container>
                 
                 <md-input-container>
                   <label><var:string label:value="Confirmation:"/>
                   </label>
-	          <input type="password" ng-model="passwords.newPasswordConfirmation"/>
+	          <input type="password" ng-model="app.passwords.newPasswordConfirmation"/>
                 </md-input-container>
                 
-                <md-button ng-click="changePassword()" type="button" ng-disabled="!canChangePassword()">
+                <md-button ng-click="app.changePassword()" type="button" ng-disabled="!app.canChangePassword()">
                   <var:string label:value="Change"/>
                 </md-button>
                 
@@ -221,15 +224,13 @@
           </var:if>
           
         </md-tabs>
-      </md-content>
     </script>
 
     <!--
         CALENDAR PREFERENCE PANEL
     -->
     <script type="text/ng-template" id="calendarsPreferences.html">
-      <md-content layout="row" class="md-flex">
-        <md-tabs md-dynamic-height="true">
+        <md-tabs class="md-flex" md-dynamic-height="true">
           
           <!-- CALENDAR - GENERAL -->
           <md-tab id="calendarOptionsView"
@@ -244,7 +245,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Week begins on :" /></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoFirstDayOfWeek">
+                    <md-select label:aria-label="Week begins on :"
+                               ng-model="app.preferences.defaults.SOGoFirstDayOfWeek">
                       <var:foreach list="daysList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemWeekStartDay"/>
@@ -262,7 +264,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Day start time :" /></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoDayStartTime">
+                    <md-select label:aria-label="Day start time :"
+                               ng-model="app.preferences.defaults.SOGoDayStartTime">
                       <var:foreach list="hoursList" item="item">
                         <md-option var:value="item">
                           <var:string value="item"/>
@@ -280,7 +283,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Day end time :" /></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoDayEndTime">
+                    <md-select label:aria-label="Day end time :"
+                               ng-model="app.preferences.defaults.SOGoDayEndTime">
                       <var:foreach list="hoursList" item="item">
                         <md-option var:value="item">
                           <var:string value="item"/>
@@ -297,7 +301,7 @@
                 
                 <div layout="row" layout-align="space-around center">
                   <md-checkbox
-                      ng-model="preferences.defaults.SOGoBusyOffHours"
+                      ng-model="app.preferences.defaults.SOGoBusyOffHours"
                       ng-true-value="1"
                       ng-false-value="0">
                     <var:string label:value="Show time as busy outside working hours"/>
@@ -307,7 +311,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="First week of year :"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoFirstWeekOfYear">
+                    <md-select label:aria-label="First week of year :"
+                               ng-model="app.preferences.defaults.SOGoFirstWeekOfYear">
                       <var:foreach list="firstWeekList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemFirstWeekText"/>
@@ -325,7 +330,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Default calendar :" /></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoDefaultCalendar">
+                    <md-select label:aria-label="Default calendar :"
+                               ng-model="app.preferences.defaults.SOGoDefaultCalendar">
                       <var:foreach list="defaultCalendarList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemCalendarText"/>
@@ -343,7 +349,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Default events classification :" /></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoCalendarEventsDefaultClassification">
+                    <md-select label:aria-label="Default events classification :"
+                               ng-model="app.preferences.defaults.SOGoCalendarEventsDefaultClassification">
                       <var:foreach list="calendarClassificationsList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemClassificationText"/>
@@ -361,7 +368,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Default tasks classification :"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoCalendarTasksDefaultClassification">
+                    <md-select label:aria-label="Default tasks classification :"
+                               ng-model="app.preferences.defaults.SOGoCalendarTasksDefaultClassification">
                       <var:foreach list="calendarClassificationsList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemClassificationText"/>
@@ -379,7 +387,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Default reminder :"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoCalendarDefaultReminder">
+                    <md-select label:aria-label="Default reminder :"
+                               ng-model="app.preferences.defaults.SOGoCalendarDefaultReminder">
                       <var:foreach list="reminderValues" item="item">
                         <md-option var:value="item">
                           <var:string value="itemReminderText"/>
@@ -407,61 +416,63 @@
 
             <md-list>
               <md-list-item ng-repeat="item in
-                                       preferences.defaults.SOGoCalendarCategories
+                                       app.preferences.defaults.SOGoCalendarCategories
                                        track by $index">
-                <i class="md-avatar" ng-style="{'background-color': '{{preferences.defaults.SOGoCalendarCategoriesColors[item]}}'}"><!-- category color --></i>
+                <i class="md-avatar" ng-style="{'background-color': '{{app.preferences.defaults.SOGoCalendarCategoriesColors[item]}}'}"><!-- category color --></i>
                 <md-input-container>
-	          <input type="text" ng-model="preferences.defaults.SOGoCalendarCategories[$index]"/>
+	          <input type="text" label:aria-label="Calendar Category" ng-model="app.preferences.defaults.SOGoCalendarCategories[$index]"/>
                 </md-input-container>
-                <md-button
-                    ng-click="removeCalendarCategory($index)"
-                    type="button"
-                    layout="row" layout-align="end center">
+                <md-button type="button"
+                           layout="row" layout-align="end center"
+                           label:aria-label="Remove Calendar Category"
+                           ng-click="app.removeCalendarCategory($index)">
                   <div class="md-icon-remove"><!-- delete --></div>
                 </md-button>
               </md-list-item>
             </md-list>
-              
-              <div class="bottomToolbar">
-                <md-button ng-click="addCalendarCategory()" type="button">
-                  <div class="md-icon-add"><!-- create --></div>
-                </md-button>
-              </div>
+
+            <div class="bottomToolbar">
+              <md-button label:aria-label="Add Calendar Category" ng-click="app.addCalendarCategory()" type="button">
+                <div class="md-icon-add"><!-- create --></div>
+              </md-button>
+            </div>
 
           </md-tab>
 
           <!-- CALENDAR - INVITATIONS -->
-          <md-tab id="calendarInvitationsTab" aria-controls="calendarInvitationsTab-content" label:label="Invitations">
-            <div role="tabpanel" aria-labelledby="calendarInvitationsView"  id="calendarInvitationsView-content">
-              <!-- <div id="calendarAppointmentsInvitationsView"
-                   class="tab"> -->
+          <md-tab id="calendarInvitationsTab"
+                  aria-controls="calendarInvitationsTab-content"
+                  label:label="Invitations">
+            <div role="tabpanel"
+                 aria-labelledby="calendarInvitationsTab"
+                 id="calendarInvitationsTab-content">
+
               <md-checkbox
-                  ng-model="preferences.settings.Calendar.PreventInvitations"
+                  ng-model="app.preferences.settings.Calendar.PreventInvitations"
                   ng-true-value="1"
                   ng-false-value="0">
                 <var:string label:value="Prevent from being invited to appointments"/>
               </md-checkbox>
 
-              <div class="pseudo-input-container">
-                <label class="pseudo-input-label">
+              <div ng-show="app.preferences.settings.Calendar.PreventInvitations == 1">
+                <label>
                   <var:string label:value="White list for appointment invitations:"/>
                 </label>
                 <md-contact-chips
-                    ng-model="preferences.settings.Calendar.PreventInvitationsWhitelist"
-                    md-contacts="userFilter($query)"
-                    md-contact-name="shortFormat"
-                    md-contact-image="image"
+                    ng-model="app.preferences.settings.Calendar.PreventInvitationsWhitelist"
+                    md-contacts="app.userFilter($query)"
+                    md-contact-name="cn"
+                    md-contact-image="$$image"
                     md-contact-email="c_email"
                     md-require-match="md-require-match"
-                    placeholder="Add">
-                  </md-contact-chips>
+                    filter-selected="false"
+                    label:placeholder="Add"><!-- users --></md-contact-chips>
               </div>
               
             </div>
           </md-tab>
           
         </md-tabs>
-      </md-content>
     </script>
     
     <!--
@@ -485,21 +496,26 @@
               <!-- <label><var:string label:value="Categories"/></label> -->
               <md-list>
                 <md-list-item ng-repeat="item in
-                                         preferences.defaults.SOGoContactsCategories
+                                         app.preferences.defaults.SOGoContactsCategories
                                          track by $index">
                   <md-input-container>
-	            <input type="text" ng-model="preferences.defaults.SOGoContactsCategories[$index]"/>
+	            <input type="text"
+                           label:aria-label="Contact Category"
+                           ng-model="app.preferences.defaults.SOGoContactsCategories[$index]"/>
                   </md-input-container>
-                  <md-button
-                      ng-click="removeContactCategory($index)"
-                      type="button" layout="row" layout-align="end center">
+                  <md-button type="button" layout="row" layout-align="end center"
+                             label:aria-label="Remove Contact Category"
+                             ng-click="app.removeContactCategory($index)"
+                      >
                     <div class="md-icon-remove md-icon-lg"><!-- delete --></div>
                   </md-button>
                 </md-list-item>
               </md-list>
               
               <div class="bottomToolbar">
-                <md-button ng-click="addContactCategory()" type="button">
+                <md-button type="button"
+                           label:aria-label="Add Contact Category"
+                           ng-click="app.addContactCategory()">
                   <div class="md-icon-add"><!-- create --></div>
                 </md-button>
               </div>
@@ -517,15 +533,14 @@
     -->
     <script type="text/ng-template" id="mailerPreferences.html">
       <var:if condition="userHasMailAccess">
-        <md-content layout="row" class="md-flex">
-          <md-tabs md-dynamic-height="true">
+          <md-tabs class="md-flex" md-dynamic-height="true">
             
             <!-- MAIL > GENERAL -->
             <md-tab id="mailGeneralTab" aria-controls="mailGeneralTab-content" label:label="General">
               <div role="tabpanel" aria-labelledby="mailGeneralView"  id="mailGeneralView-content">
 
                 <md-checkbox
-                    ng-model="preferences.defaults.SOGoMailShowSubscribedFoldersOnly"
+                    ng-model="app.preferences.defaults.SOGoMailShowSubscribedFoldersOnly"
                     ng-true-value="1"
                     ng-false-value="0"
                     label:aria-label="Show subscribed mailboxes only">
@@ -533,7 +548,7 @@
                 </md-checkbox>
 
                 <md-checkbox
-                    ng-model="preferences.defaults.SOGoMailSortByThreads"
+                    ng-model="app.preferences.defaults.SOGoMailSortByThreads"
                     ng-true-value="1"
                     ng-false-value="0"
                     label:aria-label="Sort messages by threads">
@@ -542,14 +557,17 @@
                 
                 <div layout="row" layout-align="space-around center">
                   <md-checkbox
-                      ng-model="preferences.defaults.SOGoMailAddOutgoingAddresses"
+                      ng-model="app.preferences.defaults.SOGoMailAddOutgoingAddresses"
                       ng-true-value="1"
                       ng-false-value="0"
                       label:arial-label="When sending mail, add unknown recipients to my">
                     <var:string label:value="When sending mail, add unknown recipients to my"/>
                   </md-checkbox>
                   
-                  <md-select ng-model="preferences.defaults.SOGoSelectedAddressBook">
+                  <md-select
+                      label:aria-label="Address Book"
+                      ng-disabled="app.preferences.defaults.SOGoMailAddOutgoingAddresses == 0"
+                      ng-model="app.preferences.defaults.SOGoSelectedAddressBook">
                     <var:foreach list="addressBookList" item="item">
                       <md-option var:value="item.id">
                         <var:string value="item.name"/>
@@ -561,7 +579,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Forward messages:"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoMailMessageForwarding">
+                    <md-select label:aria-label="Forward messages:"
+                               ng-model="app.preferences.defaults.SOGoMailMessageForwarding">
                       <var:foreach list="messageForwardingList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemMessageForwardingText"/>
@@ -574,7 +593,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="When replying to a message:"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoMailReplyPlacement">
+                    <md-select label:aria-label="When replying to a message:"
+                               ng-model="app.preferences.defaults.SOGoMailReplyPlacement">
                       <var:foreach list="replyPlacementList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemReplyPlacementText"/>
@@ -587,7 +607,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="And place my signature"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoMailSignaturePlacement">
+                    <md-select label:aria-label="And place my signature"
+                               ng-model="app.preferences.defaults.SOGoMailSignaturePlacement">
                       <var:foreach list="signaturePlacementList" item="item">
                         <md-option var:value="item">
                           <var:string value="itemSignaturePlacementText"/>
@@ -600,7 +621,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Compose messages in"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoMailComposeMessageType">
+                    <md-select label:aria-label="Compose messages in"
+                               ng-model="app.preferences.defaults.SOGoMailComposeMessageType">
                       <var:foreach list="composeMessagesType" item="item">
                         <md-option var:value="item">
                           <var:string value="itemComposeMessagesText"/>
@@ -613,7 +635,8 @@
                 <div layout="row" layout-align="space-around center">
                   <div><var:string label:value="Display remote inline images"/></div>
                   <div>
-                    <md-select ng-model="preferences.defaults.SOGoMailDisplayRemoteInlineImages">
+                    <md-select label:aria-label="Display remote inline images"
+                               ng-model="app.preferences.defaults.SOGoMailDisplayRemoteInlineImages">
                       <var:foreach list="displayRemoteInlineImages" item="item">
                         <md-option var:value="item">
                           <var:string value="itemDisplayRemoteInlineImagesText"/>
@@ -638,24 +661,24 @@
                   
                   <md-list>
                     <md-list-item ng-repeat="item in
-                                             preferences.defaults.SOGoSieveFilters
+                                             app.preferences.defaults.SOGoSieveFilters
                                              track by $index">
                       <md-checkbox
-                          ng-model="preferences.defaults.SOGoSieveFilters[$index].active"
+                          ng-model="app.preferences.defaults.SOGoSieveFilters[$index].active"
                           ng-true-value="1"
                           ng-false-value="0">
                         <!-- active or not-->
                       </md-checkbox>
                       <md-input-container>
-	                <input type="text" ng-model="preferences.defaults.SOGoSieveFilters[$index].name"/>
+	                <input type="text" ng-model="app.preferences.defaults.SOGoSieveFilters[$index].name"/>
                       </md-input-container>
-                      <md-button ng-click="editMailFilter($index)"
+                      <md-button ng-click="app.editMailFilter($index)"
                                  type="button" 
                                  layout="row" layout-align="end center"
                                  label:aria-label="Edit Filter">
                         <div class="md-icon-edit md-icon-lg"><!-- edit --></div>
                       </md-button>
-                      <md-button ng-click="removeMailFilter($index)"
+                      <md-button ng-click="app.removeMailFilter($index)"
                                  type="button"
                                  layout="row" layout-align="end center"
                                  label:aria-label="Delete Filter">
@@ -666,7 +689,7 @@
                   
                   <!-- FIXME: move up/down to be replaced by DnD? -->
                   <div class="bottomToolbar">
-                    <md-button ng-click="addMailFilter($event)"
+                    <md-button ng-click="app.addMailFilter($event)"
                                type="button"
                                label:aria-label="Create Filter">
                       <div class="md-icon-add"><!-- create --></div>
@@ -684,24 +707,26 @@
                 <div role="tabpanel" aria-labelledby="mailLabelsView"  id="mailLabelsView-content">
                   <md-list>
                     <md-list-item ng-repeat="(key, value) in
-                                             preferences.defaults.SOGoMailLabelsColors">
+                                             app.preferences.defaults.SOGoMailLabelsColors">
                       <i class="md-avatar" ng-style="{'background-color': '{{value[1]}}'}"><!-- label color --></i>
                       <md-input-container>
-	                <input type="text" ng-model="value[0]"/>
+	                <input type="text"
+                               label:aria-label="Label"
+                               ng-model="value[0]"/>
                       </md-input-container>
-                      <md-button ng-click="removeMailLabel(key)"
-                                 type="button"
+                      <md-button type="button"
                                  layout="row" layout-align="end center"
-                                 label:aria-label="Delete Label">
+                                 label:aria-label="Delete Label"
+                                 ng-click="app.removeMailLabel(key)">
                         <div class="md-icon-remove"><!-- delete --></div>
                       </md-button>
                     </md-list-item>
                   </md-list>
                   
                   <div class="bottomToolbar">
-                    <md-button ng-click="addMailLabel()"
-                               type="button"
-                               label:aria-label="Create Label">
+                    <md-button type="button"
+                               label:aria-label="Create Label"
+                               ng-click="app.addMailLabel()">
                       <div class="md-icon-add"><!-- create --></div>
                     </md-button>
                   </div>
@@ -716,21 +741,22 @@
 
               <md-list>
                 <md-list-item ng-repeat="item in
-                                         preferences.defaults.AuxiliaryMailAccounts
+                                         app.preferences.defaults.AuxiliaryMailAccounts
                                          track by $index">
                   <md-input-container>
 	            <input type="text"
-                           ng-model="preferences.defaults.AuxiliaryMailAccounts[$index].name"
+                           label:aria-label="Mail Account"
+                           ng-model="app.preferences.defaults.AuxiliaryMailAccounts[$index].name"
                            ng-readonly="$index == 0"/>
                   </md-input-container>
-                  <md-button ng-click="editMailAccount($index)"
+                  <md-button ng-click="app.editMailAccount($index)"
                              type="button"
                              layout="row"
                              layout-align="end center"
                              label:aria-label="Edit Account">
                     <div class="md-icon-edit md-icon-lg"><!-- edit --></div>
                   </md-button>
-                  <md-button ng-click="removeMailAccount($index)"
+                  <md-button ng-click="app.removeMailAccount($index)"
                              ng-show="$index > 0"
                              type="button"
                              layout="row"
@@ -743,7 +769,7 @@
               
               <var:if condition="mailAuxiliaryUserAccountsEnabled">
                 <div class="bottomToolbar">
-                  <md-button ng-click="addMailAccount()"
+                  <md-button ng-click="app.addMailAccount()"
                              type="button"
                              label:aria-label="Create Account">
                     <div class="md-icon-add"><!-- create --></div>
@@ -761,78 +787,79 @@
                 <div role="tabpanel" aria-labelledby="mailVacationView" id="mailVacationView-content">
                   
                   <md-checkbox
-                      ng-model="preferences.defaults.Vacation.enabled"
+                      ng-model="app.preferences.defaults.Vacation.enabled"
                       ng-true-value="1"
                       ng-false-value="0"
                       label:aria-label="Enable vacation auto reply">
                     <var:string label:value="Enable vacation auto reply"/>
                   </md-checkbox>
-                  
-                  
-                  <div>
-                    <label><var:string label:value="Auto reply message :"/>
-                    <textarea const:name="autoReplyText"
-                              const:id="autoReplyText"
-                              ng-model="preferences.defaults.Vacation.autoReplyText"/>
-                    </label>
-                  </div>
-                  
-                  <div>
-                    <!-- <script>
-                         var defaultEmailAddresses = <var:string value="defaultEmailAddresses" const:escapeHTML="NO"/>;
-                         </script> -->
-                    <label><var:string label:value="Email addresses (separated by commas) :"/></label><br/>
-                    <textarea const:name="autoReplyEmailAddresses"
-                              const:id="autoReplyEmailAddresses"
-                              ng-model="preferences.defaults.Vacation.autoReplyEmailAddresses"/><br/>
-                    <md-button>
-                      <var:string label:value="Add default email addresses" type="button"/>
-                    </md-button>            
-                  </div>
-                  
-                  <div layout="row" layout-align="space-around center">
-                    <div><var:string label:value="Days between responses :"/></div>
+
+                  <div ng-show="app.preferences.defaults.Vacation.enabled == 1">
                     <div>
-                      <md-select ng-model="preferences.defaults.Vacation.daysBetweenResponse">
-                        <var:foreach list="daysBetweenResponsesList" item="item">
-                          <md-option var:value="item">
-                            <var:string value="item"/>
-                          </md-option>
-                        </var:foreach>
-                      </md-select>
+                      <label><var:string label:value="Auto reply message :"/>
+                      <textarea const:name="autoReplyText"
+                                const:id="autoReplyText"
+                                ng-model="app.preferences.defaults.Vacation.autoReplyText"/>
+                      </label>
                     </div>
-                  </div>
-                  
-                  <md-checkbox
-                      ng-model="preferences.defaults.Vacation.ignoreLists"
-                      ng-true-value="1"
-                      ng-false-value="0">
-                    <var:string label:value="Do not send responses to mailing lists" />
-                  </md-checkbox>
-                  
-                  <div layout="row" layout-align="space-around center">
+
+                    <div>
+                      <!-- <script>
+                           var defaultEmailAddresses = <var:string value="defaultEmailAddresses" const:escapeHTML="NO"/>;
+                           </script> -->
+                      <label><var:string label:value="Email addresses (separated by commas) :"/></label><br/>
+                      <textarea const:name="autoReplyEmailAddresses"
+                                const:id="autoReplyEmailAddresses"
+                                ng-model="app.preferences.defaults.Vacation.autoReplyEmailAddresses"/><br/>
+                      <md-button>
+                        <var:string label:value="Add default email addresses" type="button"/>
+                      </md-button>
+                    </div>
+
+                    <div layout="row" layout-align="space-around center">
+                      <div><var:string label:value="Days between responses :"/></div>
+                      <div>
+                        <md-select label:aria-label="Days between responses :"
+                                   ng-model="app.preferences.defaults.Vacation.daysBetweenResponse">
+                          <var:foreach list="daysBetweenResponsesList" item="item">
+                            <md-option var:value="item">
+                              <var:string value="item"/>
+                            </md-option>
+                          </var:foreach>
+                        </md-select>
+                      </div>
+                    </div>
+
                     <md-checkbox
-                        ng-model="preferences.defaults.Vacation.endDateEnabled"
+                        ng-model="app.preferences.defaults.Vacation.ignoreLists"
                         ng-true-value="1"
                         ng-false-value="0">
-                      <var:string label:value="Disable auto reply on" />
+                      <var:string label:value="Do not send responses to mailing lists" />
                     </md-checkbox>
                     
-                    <div class="value">
-                      <p class="PseudoField-inputLike--underline">
-                        <input type="date" ng-model="preferences.defaults.Vacation.endDate"/>
-                      </p>
+                    <div layout="row" layout-align="space-around center">
+                      <md-checkbox
+                          ng-model="app.preferences.defaults.Vacation.endDateEnabled"
+                          ng-true-value="1"
+                          ng-false-value="0">
+                        <var:string label:value="Disable auto reply on" />
+                      </md-checkbox>
+
+                      <div class="value">
+                        <p class="PseudoField-inputLike--underline">
+                          <input ng-disabled="app.preferences.defaults.Vacation.endDateEnabled == 0" type="date" ng-model="app.preferences.defaults.Vacation.endDate"/>
+                        </p>
+                      </div>
+
                     </div>
                     
+                    <md-checkbox
+                        ng-model="app.preferences.defaults.Vacation.alwaysSend"
+                        ng-true-value="1"
+                        ng-false-value="0">
+                      <var:string label:value="Always send vacation message response"/>
+                    </md-checkbox>
                   </div>
-                  
-                  <md-checkbox
-                      ng-model="preferences.defaults.Vacation.alwaysSend"
-                      ng-true-value="1"
-                      ng-false-value="0">
-                    <var:string label:value="Always send vacation message response"/>
-                  </md-checkbox>
-                  
                 </div>
               </md-tab>
             </var:if>
@@ -844,40 +871,40 @@
                 <div role="tabpanel" aria-labelledby="mailForwardView"  id="mailForwardView-content">
                   <div id="forwardView" class="tab">
                     <md-checkbox
-                        ng-model="preferences.defaults.Forward.enabled"
+                        ng-model="app.preferences.defaults.Forward.enabled"
                         ng-true-value="1"
                         ng-false-value="0">
                       <var:string label:value="Forward incoming messages"/>
                     </md-checkbox>
                     
-                    <div id="forward">
+                    <div ng-show="app.preferences.defaults.Forward.enabled == 1">
                       <label><var:string label:value="Email addresses (separated by commas) :"/><br/>
                       <textarea const:name="forwardAddress"
                                 const:id="forwardAddress"
-                                ng-model="preferences.defaults.Forward.forwardAddress" />
+                                ng-model="app.preferences.defaults.Forward.forwardAddress" />
                       </label><br/>
+
+                      <md-checkbox
+                          ng-model="app.preferences.defaults.Forward.keepCopy"
+                          ng-true-value="1"
+                          ng-false-value="0">
+                        <var:string label:value="Keep a copy" />
+                      </md-checkbox>
+
                     </div>
+
+                    <script type="text/javascript">
+                      var forwardConstraints = <var:string value="forwardConstraints" const:escapeHTML="NO"/>;
+                    </script>
                     
-                    <md-checkbox
-                        ng-model="preferences.defaults.Forward.keepCopy"
-                        ng-true-value="1"
-                        ng-false-value="0">
-                      <var:string label:value="Keep a copy" />
-                    </md-checkbox>
-     
-                      <script type="text/javascript">
-                        var forwardConstraints = <var:string value="forwardConstraints" const:escapeHTML="NO"/>;
-                      </script>
- 
                   </div>
-              </div>
+                </div>
               </md-tab>
             </var:if>
             <!-- END OF MAIL > FORWARD -->
 
             
           </md-tabs>
-        </md-content>
       </var:if>
     </script>
 

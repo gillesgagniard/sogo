@@ -352,10 +352,9 @@
 
   if (!repeatItems)
     {
-      repeatItems = [NSArray arrayWithObjects: @"daily",
+      repeatItems = [NSArray arrayWithObjects: @"never",
+                             @"daily",
                              @"weekly",
-                             @"bi-weekly",
-                             @"every_weekday",
                              @"monthly",
                              @"yearly",
                              nil];

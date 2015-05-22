@@ -34,7 +34,7 @@ md-list {
   }
 
  .sg-inline-list-icon-label {
-  text-transform: uppercase;
+   text-transform: uppercase;
   }
 }
 
@@ -59,8 +59,8 @@ md-list {
   padding: $layout-gutter-width;
   width: $sg-md-grid-pitch + $baseline-grid;
   height: $sg-md-grid-pitch + $baseline-grid;
+  line-height: $sg-md-grid-pitch + $baseline-grid;
   background-clip: content-box;
-  margin-left: -$layout-gutter-width;
 }
 .md-tile-right {
   margin-right: -$layout-gutter-width;
@@ -94,4 +94,8 @@ div.md-tile-left {
 .md-tile-left-list:before {
   @extend .md-tile-left;
   content: "\f2d4";
+}
+.md-tile-left-selected:before {
+  @extend .md-tile-left;
+  content: "\f299";
 }
